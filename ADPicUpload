@@ -1,0 +1,132 @@
+$snapin = Get-PSSnapin | Where-Object {$_.Name -eq 'Microsoft.Exchange.Management.PowerShell.E2010'}
+if ($snapin -eq $null) { Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010 }
+
+
+
+$files = Get-ChildItem \\hsd.local\Staff\theriaultr\Desktop\Start\
+
+foreach ($file in $files) 
+{
+
+   #location of files and get files
+
+   $fileName = [System.IO.Path]::GetFileNameWithoutExtension($file)
+   $ext = [System.IO.Path]::GetExtension($file)
+   echo $fileName$ext                                                        #testing only
+
+   IF ($ext -eq ".jpg")
+   {
+
+      #might place test if ADUser exists here
+      Try
+      {
+         $adUser = Get-ADUser -identity $fileName
+         echo "User Found"
+
+	# ensure the user exists in AD
+
+         IF ($adUser -ne $NULL)
+         {
+
+            echo "User Not Null"
+
+            $photo = ([Byte[]] $(Get-Content -Path "\\hsd.local\Staff\theriaultr\Desktop\Start\"+$filename$ext -Encoding Byte -ReadCount 0))
+            Set-UserPhoto -Identity $filename -PictureData $photo -Confirm:$False
+            Set-UserPhoto -Identity $filename -Save -Confirm $False
+
+
+            #copy and delete files
+
+            Copy-Item \\hsd.local\Staff\theriaultr\Desktop\Start\NameA.jpg \\hsd.local\Staff\theriaultr\Desktop\Start\Done
+
+            Remove-Item \\hsd.local\Staff\theriaultr\Desktop\Start\NameA.jpg
+
+
+
+         }
+
+         ELSE
+         {
+
+            echo "User Null"
+
+         }
+	
+
+
+      }
+      Catch
+      {
+        echo "User not found"
+
+
+        #SMTP server name
+        $smtpServer = "mail.hermiston.k12.or.us" #Change this if different server
+
+        #Creating a Mail object
+        $msg = new-object Net.Mail.MailMessage
+
+        #Creating SMTP server object
+        $smtp = new-object Net.Mail.SmtpClient($smtpServer)
+
+        #Adding attachement
+
+
+        #Email structure CHANGE all that is needed
+        $msg.From = "robert.theriault@hermiston.k12.or.us"
+        $msg.ReplyTo = "robert.theriault@hermiston.k12.or.us"
+        $msg.To.Add("robert.theriault@hermiston.k12.or.us")
+        $msg.subject = "User not found"
+        $msg.body = "The user - " + $filename +" was not found in AD"
+
+
+ 
+
+        #Sending email 
+        $smtp.Send($msg)
+      }
+
+
+
+   }
+
+   ELSE
+   {
+
+
+	#File is not a jpeg
+
+        #SMTP server name
+        $smtpServer = "mail.hermiston.k12.or.us" #Change this if different server
+
+        #Creating a Mail object
+        $msg = new-object Net.Mail.MailMessage
+
+        #Creating SMTP server object
+        $smtp = new-object Net.Mail.SmtpClient($smtpServer)
+
+        #Adding attachement
+        //$file = "C:\test.xlsm"  #change to correct file
+        //$att = new-object Net.Mail.Attachment($file)
+        //$file = "C:\test.xlsx"  #change to correct file
+        //$att2 = new-object Net.Mail.Attachment($file)
+
+        #Email structure CHANGE all that is needed
+        $msg.From = "robert.theriault@hermiston.k12.or.us"
+        $msg.ReplyTo = "robert.theriault@hermiston.k12.or.us"
+        $msg.To.Add("robert.theriault@hermiston.k12.or.us")
+        $msg.subject = "Non Jpeg file found"
+        $msg.body = "The File " + $filename + $ext + " is not a Jpeg."
+        //$msg.Attachments.Add($att)
+        //$msg.Attachments.Add($att2)
+
+ 
+
+        #Sending email 
+        $smtp.Send($msg)
+
+   }
+
+
+
+}
