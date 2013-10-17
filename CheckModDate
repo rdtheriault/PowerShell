@@ -1,0 +1,59 @@
+#Get all files in folder and (subfolder -recurse)
+$files = Get-ChildItem \\server\Staff\tfolder1\ -recurse
+
+$2ndfiles = Get-ChildItem \\server\folder2\ -recurse
+
+
+foreach ($file in $files)
+{
+
+	#Gets only the date from the last modified time
+	$a = $file | Select-Object LastWriteTime |ForEach-Object($_.LastWriteTime){Write-Output $_.LastWriteTime}
+	$b = [datetime]$a
+
+	$d = [datetime]"09/15/13"
+	$e = [string]$d
+
+
+	$testFileName = $file.DirectoryName+"\"+$file.Name
+
+	#test to see if it is a file or folder (folders don't work right) returns true if it is a file
+	test-path $testFileName
+
+
+	IF (test-path $testFileName)
+	{
+
+	IF ($b -gt $d)
+		{
+
+			#$fileName = $file.DirectoryName+"\"+$file.Name
+			$filename
+			
+			foreach ($2ndfile in $2ndfiles)
+			{
+				$2ndfileName = $2ndfile.DirectoryName+"\"+$2ndfile.Name
+
+				if ($2ndfile.Name -eq $file.Name)
+				{
+					
+					Remove-Item $filename
+
+					Copy-Item $2ndfileName $file.DirectoryName
+				}
+			}
+
+
+			"do this"
+		}
+	ELSE
+		{"You are fine"}
+
+	}
+
+}
+
+
+
+
+
