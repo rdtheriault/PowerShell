@@ -3,7 +3,7 @@ if ($snapin -eq $null) { Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E
 
 
 
-$files = Get-ChildItem \\hsd.local\Staff\theriaultr\Desktop\Start\
+$files = Get-ChildItem \\server\folder1\
 
 foreach ($file in $files) 
 {
@@ -30,16 +30,16 @@ foreach ($file in $files)
 
             echo "User Not Null"
 
-            $photo = ([Byte[]] $(Get-Content -Path "\\hsd.local\Staff\theriaultr\Desktop\Start\"+$filename$ext -Encoding Byte -ReadCount 0))
+            $photo = ([Byte[]] $(Get-Content -Path "\\server\folder1\"+$filename$ext -Encoding Byte -ReadCount 0))
             Set-UserPhoto -Identity $filename -PictureData $photo -Confirm:$False
             Set-UserPhoto -Identity $filename -Save -Confirm $False
 
 
             #copy and delete files
 
-            Copy-Item \\hsd.local\Staff\theriaultr\Desktop\Start\NameA.jpg \\hsd.local\Staff\theriaultr\Desktop\Start\Done
+            Copy-Item \\server\Staff\folder1\NameA.jpg \\server\folder2\
 
-            Remove-Item \\hsd.local\Staff\theriaultr\Desktop\Start\NameA.jpg
+            Remove-Item \\server\folder1\NameA.jpg
 
 
 
@@ -61,7 +61,7 @@ foreach ($file in $files)
 
 
         #SMTP server name
-        $smtpServer = "mail.hermiston.k12.or.us" #Change this if different server
+        $smtpServer = "mail.server" #Change this if different server
 
         #Creating a Mail object
         $msg = new-object Net.Mail.MailMessage
@@ -73,14 +73,12 @@ foreach ($file in $files)
 
 
         #Email structure CHANGE all that is needed
-        $msg.From = "robert.theriault@hermiston.k12.or.us"
-        $msg.ReplyTo = "robert.theriault@hermiston.k12.or.us"
-        $msg.To.Add("robert.theriault@hermiston.k12.or.us")
+        $msg.From = "name@hmail.com"
+        $msg.ReplyTo = "name@mail.com"
+        $msg.To.Add("name@mail.com")
         $msg.subject = "User not found"
         $msg.body = "The user - " + $filename +" was not found in AD"
 
-
- 
 
         #Sending email 
         $smtp.Send($msg)
@@ -97,7 +95,7 @@ foreach ($file in $files)
 	#File is not a jpeg
 
         #SMTP server name
-        $smtpServer = "mail.hermiston.k12.or.us" #Change this if different server
+        $smtpServer = "mail.server" #Change this if different server
 
         #Creating a Mail object
         $msg = new-object Net.Mail.MailMessage
@@ -105,21 +103,12 @@ foreach ($file in $files)
         #Creating SMTP server object
         $smtp = new-object Net.Mail.SmtpClient($smtpServer)
 
-        #Adding attachement
-        //$file = "C:\test.xlsm"  #change to correct file
-        //$att = new-object Net.Mail.Attachment($file)
-        //$file = "C:\test.xlsx"  #change to correct file
-        //$att2 = new-object Net.Mail.Attachment($file)
-
         #Email structure CHANGE all that is needed
-        $msg.From = "robert.theriault@hermiston.k12.or.us"
-        $msg.ReplyTo = "robert.theriault@hermiston.k12.or.us"
-        $msg.To.Add("robert.theriault@hermiston.k12.or.us")
+        $msg.From = "name@mail.com"
+        $msg.ReplyTo = "name@mail.com"
+        $msg.To.Add("name@mail.com")
         $msg.subject = "Non Jpeg file found"
         $msg.body = "The File " + $filename + $ext + " is not a Jpeg."
-        //$msg.Attachments.Add($att)
-        //$msg.Attachments.Add($att2)
-
  
 
         #Sending email 
