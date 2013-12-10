@@ -1,0 +1,39 @@
+
+$title = "Rename Files"
+$message = $PWD             #current directory
+
+#creates a selection if the user wants to overwrite the files in the current directory
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
+    "Renames all the files in the folder."
+
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
+    "Retains all the current names in the folder."
+
+$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+$result = $host.ui.PromptForChoice($title, $message, $options, 1) 
+
+
+#The above code is only used to give the user a chance to stop the renaming if for some reason it is in the wrong directory
+IF ($result -eq 0)
+{
+
+   #gets files (including folders) in current directory
+   $files = Get-ChildItem $PWD
+
+
+   foreach ($file in $files) 
+   {
+
+      #location of files to be used in renaming
+      $fileName = [System.IO.Path]::GetFileName($file)
+
+      #for display purposes only
+      $fileName  
+
+      #adds a zero infront of the file
+      Rename-Item $PWD\$fileName 0$fileName
+
+   }
+
+}
