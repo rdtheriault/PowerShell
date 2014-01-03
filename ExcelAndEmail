@@ -2,23 +2,28 @@
 $Excel = New-Object -ComObject excel.application 
     $Excel.visible = $false 
     $Excel.DisplayAlerts = $false 
-    $Workbook = $Excel.Workbooks.open("C:\test.csv") #change to correct file
+    $Workbook = $Excel.Workbooks.open("\\hsd-fs-01\f$\IT\Scripts\PrintShopMonthlyReport\PrintShopReport.csv") #change to correct file
     $Worksheet = $Workbook.WorkSheets.item(1) 
     $worksheet.activate()  
-    $range = $WorkSheet.Range("A1:Z1").EntireColumn #change range if needed
+    $range = $WorkSheet.Range("A1:G1").EntireColumn #change range if needed (this is more focused)
     $range.Copy() 
 $Excel.Quit()
 
-
-#Opens xlsm and pastes data
+#Opens xls and pastes data also saves a copy into archive folder
 $Excel2 = New-Object -ComObject excel.application 
     $Excel2.visible = $false 
     $Excel2.DisplayAlerts = $false 
-    $Workbook2 = $Excel2.Workbooks.open("C:\test.xlsm") #change to correct file
-    $Worksheet2 = $Workbook2.Worksheets.item(1) 
+    $Workbook2 = $Excel2.Workbooks.open("\\hsd-fs-01\f$\IT\Scripts\PrintShopMonthlyReport\PrintShopReportE.xlsx") #change to correct file
+    $Worksheet2 = $Workbook2.Worksheets.item(1)
+    $RangeD = $Worksheet2.Range("A1:G1").EntireColumn #this way you only replace these columns
+    $RangeD.Clear()
     $Range2 = $Worksheet2.Range("A1") 
-    $Worksheet2.Paste()  
+    $Worksheet2.Paste($Range2)  
     $workbook2.Save()  
+
+    $date = Get-Date -UFormat %m%y #get date to add to name for archive
+
+    $Workbook2.SaveAs("\\hsd-fs-01\f$\IT\Scripts\PrintShopMonthlyReport\Archive\PrintShopReport"+$date+".xlsx")
 $Excel2.Quit() 
 
 
