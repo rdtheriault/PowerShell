@@ -1,0 +1,20 @@
+
+#Clear Print Queue
+cmd /c net stop spooler
+cmd /c del %systemroot%\system32\spool\printers\*.shd
+cmd /c del %systemroot%\system32\spool\printers\*.spl
+cmd /c net start spooler
+
+
+
+get-printer #list printers
+remove-printer Name
+
+
+
+cd C:\Windows\System32\Printing_Admin_Scripts\en-US
+cmd /c Cscript prnport.vbs -r IP_127.0.0.1 -d #remove port
+cmd /c Cscript prnport.vbs -l #list ports
+
+
+
