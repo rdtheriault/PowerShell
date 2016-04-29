@@ -1,12 +1,12 @@
 #complete and expanded one
-if((Get-PSSnapin | Where {$_.Name -eq "Microsoft.SharePoint.PowerShell"}) -eq $null) {
-     Add-PSSnapin Microsoft.SharePoint.PowerShell;
-}
+if((Get-PSSnapin | Where {$_.Name -eq "Microsoft.SharePoint.PowerShell"}) -eq $null) {Add-PSSnapin Microsoft.SharePoint.PowerShell;}
 
-$itemNames = @("Short name", "Principal", "Secretary", "Address", "Phone Number", "Fax Number")
+$i = 0
 
-$sourceWebURL = "https://share.hermiston.k12.or.us"
-$sourceListName = "locations"
+$itemNames = @("Short Name", "Principal", "Secretary", "Address", "Phone Number", "Fax Number")
+
+$sourceWebURL = "https://share.point.k12.or.us"
+$sourceListName = "Locations"
 
 $spSourceWeb = Get-SPWeb $sourceWebURL
 $spSourceSite = Get-SPSite $sourceWebURL 
@@ -20,22 +20,31 @@ $spSourceSite.AllWebs  | Select -ExpandProperty Lists | Where {$_.Title -eq $sou
 
 #this is the test code
     #for amount of items in list - 10 (i.e. locations as the lists have the same Key id)
-    for($i = 0; $i -lt $_.items.count; $i++){
-    
+    foreach($item in $_.items){
+    if ($i -eq 10) {$i = 0}
+    $holder = $item
         #for the amount of items in the array holding the names of the fields to be changed
         for($x = 0; $x -lt $itemNames.count; $x++) {
         
             # Show what items are in list and items that is going to replace it.
-            $_.Items[$i][$itemNames[$x]]
-            $spSourceList.items[$i][$itemNames[$x]]   
+            $item[$itemNames[$x]]
+            $spSourceList.items[$i][$itemNames[$x]] 
+             #$itemNames[$x]
+            $item[$itemNames[$x]] = $spSourceList.items[$i][$itemNames[$x]]
+            $item.update() 
+            
         }
+        $i++
     }
 
 
 #this is the actual code
     #for($i = 0; $i -lt $_.items.count; $i++){
+
         #for($x = 0; $x -lt $itemNames.count; $x++) {
-            #$_.Items[$i][$itemNames[$x]] = $spSourceList.items[$i][$itemNames[$x]]; $_.Items[$i].update
+
+
+
         #}
     #}
 
